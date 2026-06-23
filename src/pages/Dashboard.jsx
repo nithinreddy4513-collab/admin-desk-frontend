@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../services/api";
 
 export default function Dashboard() {
@@ -57,9 +57,9 @@ export default function Dashboard() {
       </div>
 
       <div style={{ marginTop: "30px" }}>
-        <a href="/tickets" style={{ padding: "10px 20px", backgroundColor: "#007bff", color: "white", textDecoration: "none", borderRadius: "4px" }}>
+        <Link to="/tickets" style={{ padding: "10px 20px", backgroundColor: "#007bff", color: "white", textDecoration: "none", borderRadius: "4px" }}>
           View All Tickets →
-        </a>
+        </Link>
       </div>
     </div>
   );
