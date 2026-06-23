@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 
 export default function Login() {
-  const [email, setEmail] = useState("admin@worka.com");
+  const [email, setEmail] = useState("superadmin@worka.com");
   const [password, setPassword] = useState("123456");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,13 +16,14 @@ export default function Login() {
 
     try {
       const response = await api.post("/auth/login", { email, password });
-      const token = response.data.token;
 
-      // Save token to localStorage
-      localStorage.setItem("token", token);
+      // Save token and user info to localStorage
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("role", response.data.role);
+      localStorage.setItem("fullName", response.data.fullName);
 
       // Add token to API headers for future requests
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      api.defaults.headers.common["Authorization"] = `Bearer ${response.data.token}`;
 
       // Redirect to dashboard
       navigate("/dashboard");
