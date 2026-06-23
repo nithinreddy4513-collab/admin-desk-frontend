@@ -1,19 +1,24 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { viteStaticCopy } from 'vite-plugin-static-copy'
+import fs from 'fs'
+import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
-    viteStaticCopy({
-      targets: [
-        {
-          src: 'public/_redirects',
-          dest: ''
-        }
-      ]
-    })
+    {
+      name: 'copy-redirects',
+      apply: 'build',
+      generateBundle() {
+        const redirectsContent = fs.readFileSync(path.resolve(__dirname, 'public/_redirects'), 'utf-8')
+        this.emitFile({
+          type: 'asset',
+          fileName: '_redirects',
+          source: redirectsContent
+        })
+      }
+    }
   ],
   build: {
     outDir: 'dist',
