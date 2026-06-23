@@ -1,0 +1,9 @@
+services:
+  - type: static_site
+    name: admin-desk-frontend
+    buildCommand: npm run build
+    staticPublishPath: ./dist
+    routes:
+      - path: /*
+        destination: /index.html
+        match: miss
