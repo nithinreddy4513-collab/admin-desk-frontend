@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import { formatDate } from "../utils/date";
 
 export default function Tickets() {
   const [tickets, setTickets] = useState([]);
@@ -340,7 +341,7 @@ export default function Tickets() {
                       ))}
                     </select>
                   </td>
-                  <td style={tableCellStyle}>{new Date(ticket.createdAt).toLocaleDateString()}</td>
+                  <td style={tableCellStyle}>{formatDate(ticket.createdAt)}</td>
                   <td style={tableCellStyle}>
                     <button
                       onClick={() => navigate(`/tickets/${ticket.id}`)}

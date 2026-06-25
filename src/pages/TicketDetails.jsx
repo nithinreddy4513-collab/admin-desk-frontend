@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
+import { formatDate } from "../utils/date";
 
 export default function TicketDetails() {
   const { ticketId } = useParams();
@@ -203,13 +204,13 @@ export default function TicketDetails() {
           <div>
             <label style={{ fontWeight: "bold", color: "#666" }}>Created</label>
             <p style={{ fontSize: "14px", color: "#666" }}>
-              {new Date(ticket.createdAt).toLocaleString()}
+              {formatDate(ticket.createdAt)}
             </p>
           </div>
           <div>
             <label style={{ fontWeight: "bold", color: "#666" }}>Updated</label>
             <p style={{ fontSize: "14px", color: "#666" }}>
-              {new Date(ticket.updatedAt).toLocaleString()}
+              {formatDate(ticket.updatedAt)}
             </p>
           </div>
         </div>
@@ -267,7 +268,7 @@ export default function TicketDetails() {
                       </p>
                     </div>
                     <p style={{ fontSize: "12px", color: "#999", margin: "0", whiteSpace: "nowrap", marginLeft: "10px" }}>
-                      {new Date(activity.createdAt).toLocaleTimeString()}
+                        {formatDate(activity.createdAt, { hour: "numeric", minute: "numeric", hour12: true })}
                     </p>
                   </div>
                 </div>
@@ -304,7 +305,7 @@ export default function TicketDetails() {
                     {comment.userName}
                   </p>
                   <p style={{ fontSize: "12px", color: "#999", margin: "0" }}>
-                    {new Date(comment.createdAt).toLocaleString()}
+                    {formatDate(comment.createdAt)}
                   </p>
                 </div>
                 <p style={{ margin: "0", lineHeight: "1.5", whiteSpace: "pre-wrap" }}>

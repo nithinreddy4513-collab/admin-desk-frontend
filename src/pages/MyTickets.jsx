@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import { formatDate } from "../utils/date";
 
 export default function MyTickets() {
   const [tickets, setTickets] = useState([]);
@@ -211,8 +212,8 @@ export default function MyTickets() {
                       {ticket.priority ? ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1) : "N/A"}
                     </span>
                   </td>
-                  <td style={tableCellStyle}>{new Date(ticket.createdAt).toLocaleDateString()}</td>
-                  <td style={tableCellStyle}>{new Date(ticket.updatedAt).toLocaleDateString()}</td>
+                  <td style={tableCellStyle}>{formatDate(ticket.createdAt)}</td>
+                  <td style={tableCellStyle}>{formatDate(ticket.updatedAt)}</td>
                   <td style={tableCellStyle}>
                     <button
                       onClick={() => navigate(`/tickets/${ticket.id}`)}

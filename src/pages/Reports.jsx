@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import { formatDate, parseFirestoreTimestamp } from "../utils/date";
 
 export default function Reports() {
   const [tickets, setTickets] = useState([]);
@@ -48,16 +49,16 @@ export default function Reports() {
       inProgressTickets: tickets.filter((t) => t.status === "in-progress").length,
       resolvedTickets: tickets.filter((t) => t.status === "resolved").length,
       ticketsCreatedToday: tickets.filter(
-        (t) => new Date(t.createdAt) >= today
+        (t) => parseFirestoreTimestamp(t.createdAt) >= today
       ).length,
       ticketsCreatedThisWeek: tickets.filter(
-        (t) => new Date(t.createdAt) >= weekAgo
+        (t) => parseFirestoreTimestamp(t.createdAt) >= weekAgo
       ).length,
       ticketsResolvedToday: tickets.filter(
-        (t) => t.status === "resolved" && new Date(t.updatedAt) >= today
+        (t) => t.status === "resolved" && parseFirestoreTimestamp(t.updatedAt) >= today
       ).length,
       ticketsResolvedThisWeek: tickets.filter(
-        (t) => t.status === "resolved" && new Date(t.updatedAt) >= weekAgo
+        (t) => t.status === "resolved" && parseFirestoreTimestamp(t.updatedAt) >= weekAgo
       ).length,
       activeUsers: users.filter((u) => u.isActive).length,
     };
@@ -67,8 +68,8 @@ export default function Reports() {
     let avgResolutionTime = 0;
     if (resolvedTickets.length > 0) {
       const totalTime = resolvedTickets.reduce((sum, ticket) => {
-        const created = new Date(ticket.createdAt);
-        const updated = new Date(ticket.updatedAt);
+        const created = parseFirestoreTimestamp(ticket.createdAt);
+        const updated = parseFirestoreTimestamp(ticket.updatedAt);
         const timeInMinutes = (updated - created) / (1000 * 60);
         return sum + timeInMinutes;
       }, 0);
@@ -80,7 +81,7 @@ export default function Reports() {
     let oldestOpenTicket = null;
     if (openTickets.length > 0) {
       oldestOpenTicket = openTickets.reduce((oldest, current) => {
-        return new Date(current.createdAt) < new Date(oldest.createdAt)
+        return parseFirestoreTimestamp(current.createdAt) < parseFirestoreTimestamp(oldest.createdAt)
           ? current
           : oldest;
       });
@@ -90,8 +91,8 @@ export default function Reports() {
     let fastestResolutionTime = null;
     if (resolvedTickets.length > 0) {
       const fastest = resolvedTickets.reduce((min, ticket) => {
-        const created = new Date(ticket.createdAt);
-        const updated = new Date(ticket.updatedAt);
+        const created = parseFirestoreTimestamp(ticket.createdAt);
+        const updated = parseFirestoreTimestamp(ticket.updatedAt);
         const timeInHours = (updated - created) / (1000 * 60 * 60);
         return timeInHours < min.time ? { ticket, time: timeInHours } : min;
       }, { time: Infinity });
@@ -189,7 +190,7 @@ export default function Reports() {
 
       const count = tickets.filter(
         (t) =>
-          new Date(t.createdAt) >= dayStart && new Date(t.createdAt) < dayEnd
+          parseFirestoreTimestamp(t.createdAt) >= dayStart && parseFirestoreTimestamp(t.createdAt) < dayEnd
       ).length;
 
       trend.push({
@@ -210,8 +211,8 @@ export default function Reports() {
       ticket.status,
       ticket.priority,
       ticket.assignedToName || "Unassigned",
-      new Date(ticket.createdAt).toLocaleString(),
-      new Date(ticket.updatedAt).toLocaleString(),
+      formatDate(ticket.createdAt),
+      formatDate(ticket.updatedAt),
     ]);
 
     const csv = [headers, ...rows].map((row) => row.map((cell) => `"${cell}"`).join(",")).join("\n");
@@ -323,7 +324,7 @@ export default function Reports() {
               title="Oldest Open Ticket"
               value={metrics.oldestOpenTicket.title}
               description={`Created ${Math.floor(
-                (new Date() - new Date(metrics.oldestOpenTicket.createdAt)) / (1000 * 60 * 60)
+                (new Date() - parseFirestoreTimestamp(metrics.oldestOpenTicket.createdAt)) / (1000 * 60 * 60)
               )} hours ago`}
               color="#dc3545"
             />
